@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -
 
-from .data_tools import DataTools
+from .fusion import Fusion
+from .focus_measures import EnergyOfLaplacian
