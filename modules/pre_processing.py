@@ -22,15 +22,10 @@ import skimage
 
 
 class PreProcessing(object):
-    """First line of a docstring is short and next to the quotes.
-
-    Class and exception names are CapWords.
-
-    Closing quotes are on their own line
-    """
+    """Class with pre-processing operations for fusion rules."""
 
     def __init__(self):
-        pass
+        super().__init__()
 
     def open_image(self, path):
         """Method and function names are lower_case_with_underscores.
@@ -53,8 +48,8 @@ class PreProcessing(object):
 
         Always use self as first arg.
         """
-        files = sort_dataset_names(os.listdir(path))
-        return [open_image(path + img) for img in files]
+        files = self.sort_dataset_names(os.listdir(path))
+        return [self.open_image(path + img) for img in files]
 
 
     def normalize_image(self, arr):
@@ -80,7 +75,7 @@ class PreProcessing(object):
         Always use self as first arg.
         """
         if normalize:
-            arr = normalize_image(arr) 
+            arr = self.normalize_image(arr) 
         
         return Image.fromarray((arr * 255.).astype(np.uint8))
 
@@ -90,14 +85,14 @@ class PreProcessing(object):
 
         Always use self as first arg.
         """
-        gray = image_to_array(img).mean(axis=2)
-        return ndarray_to_image(gray)
+        gray = self.image_to_ndarray(img).mean(axis=2)
+        return self.ndarray_to_image(gray)
 
 
-    def grayscale_gleam(img):
+    def grayscale_gleam(self, img):
         """Method and function names are lower_case_with_underscores.
 
         Always use self as first arg.
         """
-        gray = np.power(image_to_array(img), 1/2.2).mean(axis=2)
-        return ndarray_to_image(gray)
+        gray = np.power(self.image_to_ndarray(img), 1/2.2).mean(axis=2)
+        return self.ndarray_to_image(gray)
