@@ -1,7 +1,15 @@
 from modules.pre_processing import PreProcessing
 from modules.focus_measures import EnergyOfLaplacian
-from modules.evaluation import
 
+import os
+
+import numpy as np
+from PIL import Image
+from SSIM_PIL import compare_ssim
+from skimage.metrics import structural_similarity as SSIM
+from skimage.metrics import peak_signal_noise_ratio as PSNR
+
+from pytictoc import TicToc
 
 class Fusion(object):
 
@@ -16,15 +24,43 @@ class Fusion(object):
         Always use self as first arg.
         """
         # open the dataset images
-        dataset = self.pre_processing.open_dataset(path)
+        # size = (1280, 960)
+        # size = (640, 480)
+        # size = (320, 240)
+        # size = (160, 120)
+        size = (80, 60)
+        # size = None
 
-        # convert images to grayscale
+        dataset = self.pre_processing.open_dataset(path, size)
+
+        # # convert images to grayscale
         gray_dataset = [self.pre_processing.image_to_ndarray(
-            self.pre_processing.grayscale_averaging(img)) for img in dataset]
+            self.pre_processing.grayscale_luminance(img)) for img in dataset]
 
         result = self.energy_of_laplacian.execute(
             dataset=dataset, gray_dataset=gray_dataset)
 
-        self.pre_processing.ndarray_to_image(result).show()
+        A = self.pre_processing.ndarray_to_image(result)
 
-    def evaluate()
+        mssim = 0.0
+        psnr = 0.0
+
+        arrs = []
+        for elem in dataset:
+            tmp = self.pre_processing.image_to_ndarray(elem)
+            arrs.append((tmp * 255.).astype(np.uint8))
+
+        for i in range(len(dataset)):
+            mssim += compare_ssim(dataset[i], A)
+            tmp = PSNR(arrs[i], (result * 255.).astype(np.uint8))
+            psnr += tmp
+
+        print(mssim / len(dataset))
+        print(psnr / len(dataset))
+
+        # A.thumbnail(size, Image.ANTIALIAS)
+
+        A.show(title="A")
+
+
+    # def evaluate()

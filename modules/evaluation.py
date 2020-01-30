@@ -31,3 +31,20 @@ class Evaluation(object):
         """
         img = Image.open(path)
         return img
+
+
+### Multifocus image fusion using the nonsubsampled contourlet transform
+# mean structural similarity
+# difference coefficient
+# gradient-based fusion evaluation metric
+
+### Multi-focus image fusion with dense SIFT
+# Normalized mutual information
+# Nonlinear correlation information entropy
+# Phase congruency-based fusion metric
+# Yang’s fusion metric
+# Chen-Blum metric
+
+### A pixel based multi-focus image fusion method
+# Quality of edge
+# Fusion factor
