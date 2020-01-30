@@ -27,29 +27,37 @@ class PreProcessing(object):
     def __init__(self):
         super().__init__()
 
-    def open_image(self, path):
+    def open_image(self, path, size):
         """Method and function names are lower_case_with_underscores.
 
         Always use self as first arg.
         """
         img = Image.open(path)
+
+        if size:
+            img.thumbnail(size, Image.ANTIALIAS)
+
         return img
 
 
-    def sort_dataset_names(self, files):
-        files = [item.replace('.jpg', '') for item in files]
+    def sort_dataset_names(self, files, extension):
+        files = [item.replace(extension, '') for item in files]
         files.sort()
-        files = [item + '.jpg' for item in files]
+        files = [item + extension for item in files]
         
         return files
 
-    def open_dataset(self, path):
+    def open_dataset(self, path, size):
         """Method and function names are lower_case_with_underscores.
 
         Always use self as first arg.
         """
-        files = self.sort_dataset_names(os.listdir(path))
-        return [self.open_image(path + img) for img in files]
+        filenames = os.listdir(path)
+        sample_file = filenames[0]
+        extension = sample_file[sample_file.find('.') : len(sample_file)]
+
+        files = self.sort_dataset_names(filenames, extension)
+        return [self.open_image(path + img, size) for img in files]
 
 
     def normalize_image(self, arr):
@@ -86,6 +94,12 @@ class PreProcessing(object):
         Always use self as first arg.
         """
         gray = self.image_to_ndarray(img).mean(axis=2)
+        return self.ndarray_to_image(gray)
+
+
+    def grayscale_luminance(self, img):
+        tmp = self.image_to_ndarray(img)
+        gray = tmp[:, :, 0] * 0.299 + tmp[:, :, 1] * 0.587 + tmp[:, :, 2] * 0.114
         return self.ndarray_to_image(gray)
 
 
