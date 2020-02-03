@@ -3,8 +3,9 @@ import os
 
 import matplotlib.pyplot as plt
 import numpy as np
+from pytictoc import TicToc
 from scipy import ndimage, signal
-
+import skimage
 
 class AbstractFocusMeasure(metaclass=abc.ABCMeta):
 
@@ -21,32 +22,9 @@ class EnergyOfLaplacian(AbstractFocusMeasure):
     def __init__(self):
         super().__init__()
 
-    def laplacian_filter(self, arr, kernel_size=3, square=True):
-        gradients = ndimage.gaussian_laplace(arr, sigma=11)
-        # gradients = skimage.filters.laplace(arr, kernel_size)
-
-        if square:
-            gradients *= gradients
-
-        return gradients
-
 
     def laplacian_of_gaussian_filter(self, arr, sigma=3, square=False):
         gradients = ndimage.gaussian_laplace(arr, sigma=sigma)
-
-        if square:
-            gradients *= gradients
-
-        return gradients
-
-    def diagonal_laplacian_filter(self, arr, alpha, square=True):
-        lap = np.array([[0, 1, 0],[1, -4, 1], [0, 1, 0]])
-        lap = (1.0 - alpha) / (1.0 + alpha) * lap + (alpha) / (1.0 + alpha) * lap
-
-        # print ndimage.convolve(image, stencil, mode='wrap')
-        # gradients = skimage.filters.laplace(arr, kernel_size)
-        gradients = signal.convolve2d(arr, lap, mode='same')
-
         if square:
             gradients *= gradients
 
@@ -58,13 +36,12 @@ class EnergyOfLaplacian(AbstractFocusMeasure):
         gray_dataset = kwargs['gray_dataset']
 
         # compute the edges of the images with the laplacian filter
-        edges = np.stack([self.laplacian_of_gaussian_filter(arr, 10000, square=False)
+        edges = np.stack([self.laplacian_of_gaussian_filter(arr, 1, square=False)
                              for arr in gray_dataset], axis=2)
 
         # compute 3D indices of the highest energies of laplacian,
         # pixel-wise
         energies = np.argmax(edges, axis=2)
-
         # Synthesize an image by sampling from each layer
         # according to it's highest energy
 
@@ -72,7 +49,6 @@ class EnergyOfLaplacian(AbstractFocusMeasure):
         height, width = edges.shape[0:2]
 
         stack = np.stack(dataset, axis=0)
-
         result = np.zeros((height, width, 3), dtype=np.float32)
         for row in range(height):
                 for col in range(width):
