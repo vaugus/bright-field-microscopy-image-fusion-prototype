@@ -16,6 +16,7 @@ See http://www.python.org/dev/peps/pep-0008/ for more PEP-8 details
 
 import os
 
+import image_slicer
 import numpy as np
 from PIL import Image, ImageFilter, ImageOps
 import skimage
@@ -39,12 +40,11 @@ class PreProcessing(object):
 
         return img
 
-
     def sort_dataset_names(self, files, extension):
         files = [item.replace(extension, '') for item in files]
         files.sort()
         files = [item + extension for item in files]
-        
+
         return files
 
     def open_dataset(self, path, size):
@@ -54,10 +54,28 @@ class PreProcessing(object):
         """
         filenames = os.listdir(path)
         sample_file = filenames[0]
-        extension = sample_file[sample_file.find('.') : len(sample_file)]
+        extension = sample_file[sample_file.find('.'): len(sample_file)]
 
         files = self.sort_dataset_names(filenames, extension)
         return [self.open_image(path + img, size) for img in files]
+
+    def grayscale_dataset(self, dataset, method):
+        """Method and function names are lower_case_with_underscores.
+
+        Always use self as first arg.
+        """
+        converter = None
+        if method == 'luminance':
+            converter = self.grayscale_luminance
+
+        if method == 'gleam':
+            converter = self.grayscale_gleam
+
+        if method == 'averaging':
+            converter = self.grayscale_averaging
+
+        return [self.image_to_ndarray(
+            converter(img)) for img in dataset]
 
 
     def normalize_image(self, arr):
@@ -68,7 +86,6 @@ class PreProcessing(object):
         min_, max_ = arr.min(), arr.max()
         return (arr - min_) / (max_ - min_)
 
-
     def image_to_ndarray(self, img):
         """Method and function names are lower_case_with_underscores.
 
@@ -76,17 +93,15 @@ class PreProcessing(object):
         """
         return np.array(img, dtype=np.float32) / 255.
 
-
     def ndarray_to_image(self, arr, normalize=True):
         """Method and function names are lower_case_with_underscores.
 
         Always use self as first arg.
         """
         if normalize:
-            arr = self.normalize_image(arr) 
-        
-        return Image.fromarray((arr * 255.).astype(np.uint8))
+            arr = self.normalize_image(arr)
 
+        return Image.fromarray((arr * 255.).astype(np.uint8))
 
     def grayscale_averaging(self, img):
         """Method and function names are lower_case_with_underscores.
@@ -96,12 +111,11 @@ class PreProcessing(object):
         gray = self.image_to_ndarray(img).mean(axis=2)
         return self.ndarray_to_image(gray)
 
-
     def grayscale_luminance(self, img):
         tmp = self.image_to_ndarray(img)
-        gray = tmp[:, :, 0] * 0.299 + tmp[:, :, 1] * 0.587 + tmp[:, :, 2] * 0.114
+        gray = tmp[:, :, 0] * 0.299 + tmp[:, :, 1] * \
+            0.587 + tmp[:, :, 2] * 0.114
         return self.ndarray_to_image(gray)
-
 
     def grayscale_gleam(self, img):
         """Method and function names are lower_case_with_underscores.

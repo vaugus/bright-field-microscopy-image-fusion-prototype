@@ -9,7 +9,6 @@ from SSIM_PIL import compare_ssim
 from skimage.metrics import structural_similarity as SSIM
 from skimage.metrics import peak_signal_noise_ratio as PSNR
 
-from pytictoc import TicToc
 
 class Fusion(object):
 
@@ -24,18 +23,26 @@ class Fusion(object):
         Always use self as first arg.
         """
         # open the dataset images
-        # size = (1280, 960)
+        size = (1280, 960)
         # size = (640, 480)
         # size = (320, 240)
         # size = (160, 120)
-        size = (80, 60)
+        # size = (80, 60)
+        # size = (40, 30)
+        # size = (20, 15)
+
+
+        # size = (544, 544)
+        # size = (272, 272)
+        # size = (136, 136)
+        # size = (68, 68)
         # size = None
+
 
         dataset = self.pre_processing.open_dataset(path, size)
 
-        # # convert images to grayscale
-        gray_dataset = [self.pre_processing.image_to_ndarray(
-            self.pre_processing.grayscale_luminance(img)) for img in dataset]
+        # convert images to grayscale
+        gray_dataset = self.pre_processing.grayscale_dataset(dataset, 'luminance')
 
         result = self.energy_of_laplacian.execute(
             dataset=dataset, gray_dataset=gray_dataset)
@@ -58,9 +65,4 @@ class Fusion(object):
         print(mssim / len(dataset))
         print(psnr / len(dataset))
 
-        # A.thumbnail(size, Image.ANTIALIAS)
-
         A.show(title="A")
-
-
-    # def evaluate()
