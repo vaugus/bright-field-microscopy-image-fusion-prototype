@@ -3,3 +3,4 @@
 
 from .fusion import Fusion
 from .focus_measures import EnergyOfLaplacian
+from .evaluation import Evaluation

@@ -7,9 +7,8 @@ import numpy as np
 import modules
 
 def main():
-	path = '/home/victor/Documents/msc-image-database/callisia/alligned/stack/'
-	# path = '/home/victor/Documents/repositories/github/python/light-microscopy-image-fusion-prototype/images/beer-stack/'
-	# path = '/home/victor/Documents/repositories/github/python/light-microscopy-image-fusion-prototype/images/lena/'
+	path = str(input()).rstrip()
+	# path = '/home/victor/Documents/msc-image-database/callisia/alligned/stack/'
 
 	fusion = modules.Fusion()
 	fusion.run(path)
