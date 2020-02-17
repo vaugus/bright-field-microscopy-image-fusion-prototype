@@ -2,5 +2,5 @@
 # -*- coding: utf-8 -
 
 from .fusion import Fusion
-from .focus_measures import EnergyOfLaplacian
+from .fusion_rules import LaplacianOfGaussianEnergy
 from .evaluation import Evaluation

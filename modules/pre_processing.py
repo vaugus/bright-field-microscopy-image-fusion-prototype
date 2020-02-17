@@ -25,7 +25,7 @@ class PreProcessing(object):
         :param path: Location of the image in the filesystem.
         :type path: str
 
-        :param size: Size of the image, if the user wants it to be 
+        :param size: Size of the image, if the user wants it to be
         resized before the computation. Default is None.
         :type size: tuple
 
@@ -46,7 +46,7 @@ class PreProcessing(object):
         :param files: The list of file names.
         :type files: list of str
 
-        :param extension: The extension of the image files. 
+        :param extension: The extension of the image files.
         :type size: str
 
         :returns: The sorted list of dataset image names.
@@ -65,7 +65,7 @@ class PreProcessing(object):
         :param path: Location of the dataset in the filesystem.
         :type path: str
 
-        :param size: Size of the images, if the user wants it to be 
+        :param size: Size of the images, if the user wants it to be
         resized before the computation. Default is None.
         :type size: tuple
 
@@ -138,11 +138,11 @@ class PreProcessing(object):
         :param dataset: List of dataset images.
         :type dataset: list of PIL.Image
 
-        :param method: A string to select the conversion method. 
+        :param method: A string to select the conversion method.
         :type method: str
 
         :returns: A list of the converted grayscale images.
-        :rtype: list of ndarray
+        :rtype: list of numpy.ndarray
         """
         converter = None
         if method == 'luminance':
@@ -186,7 +186,7 @@ class PreProcessing(object):
     def ndarray_to_image(self, arr, normalize=True):
         """Converts a numpy.ndarray object to a PIL.Image object.
 
-        :param img: The numpy.ndarray representation of the image 
+        :param img: The numpy.ndarray representation of the image
         to be converted.
         :type img: numpy.ndarray
 
