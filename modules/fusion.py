@@ -1,21 +1,37 @@
-from modules.pre_processing import PreProcessing
-from modules.focus_measures import EnergyOfLaplacian
+#! /usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""This module's docstring summary line.
+
+This is a multi-line docstring. Paragraphs are separated with blank lines.
+Lines conform to 79-column limit.
+
+Module and packages names should be short, lower_case_with_underscores.
+Notice that this in not PEP8-cheatsheet.py
+
+Seriously, use flake8. Atom.io with https://atom.io/packages/linter-flake8
+is awesome!
+
+See http://www.python.org/dev/peps/pep-0008/ for more PEP-8 details
+"""
 
 import os
 
 import numpy as np
 from PIL import Image
-from SSIM_PIL import compare_ssim
-from skimage.metrics import structural_similarity as SSIM
-from skimage.metrics import peak_signal_noise_ratio as PSNR
 
+from modules.pre_processing import PreProcessing
+from modules.focus_measures import EnergyOfLaplacian
+from modules.evaluation import Evaluation
 
 class Fusion(object):
+    """Class with pre-processing operations for fusion rules."""
+
 
     def __init__(self):
         super().__init__()
         self.pre_processing = PreProcessing()
         self.energy_of_laplacian = EnergyOfLaplacian()
+        self.evaluation = Evaluation()
 
     def run(self, path):
         """Method and function names are lower_case_with_underscores.
@@ -23,46 +39,29 @@ class Fusion(object):
         Always use self as first arg.
         """
         # open the dataset images
-        size = (1280, 960)
-        # size = (640, 480)
-        # size = (320, 240)
-        # size = (160, 120)
-        # size = (80, 60)
-        # size = (40, 30)
-        # size = (20, 15)
-
-
-        # size = (544, 544)
-        # size = (272, 272)
-        # size = (136, 136)
-        # size = (68, 68)
-        # size = None
-
+        size = None
 
         dataset = self.pre_processing.open_dataset(path, size)
 
-        # convert images to grayscale
+        # # convert images to grayscale
         gray_dataset = self.pre_processing.grayscale_dataset(dataset, 'luminance')
 
+        sigma = 0.7
+
         result = self.energy_of_laplacian.execute(
-            dataset=dataset, gray_dataset=gray_dataset)
+            dataset=dataset, gray_dataset=gray_dataset, sigma=sigma)
 
+        # p = '/home/victor/Desktop/LOG.tif'
+        # p = '/home/victor/Desktop/PCA.tif'
+        # p = '/home/victor/Desktop/GF.tif'
+        # p = '/home/victor/Desktop/MSGW.tif'
+        # p = '/home/victor/Desktop/MSVD.tif'
+        # A = self.pre_processing.open_image(p, None)
+
+        # result = self.pre_processing.image_to_ndarray(A)
         A = self.pre_processing.ndarray_to_image(result)
-
-        mssim = 0.0
-        psnr = 0.0
-
-        arrs = []
-        for elem in dataset:
-            tmp = self.pre_processing.image_to_ndarray(elem)
-            arrs.append((tmp * 255.).astype(np.uint8))
-
-        for i in range(len(dataset)):
-            mssim += compare_ssim(dataset[i], A)
-            tmp = PSNR(arrs[i], (result * 255.).astype(np.uint8))
-            psnr += tmp
-
-        print(mssim / len(dataset))
-        print(psnr / len(dataset))
-
-        A.show(title="A")
+        result = self.pre_processing.normalize_image(result)
+        
+        print('SF: {0}'.format(self.evaluation.spatial_frequency(result)))
+        print('STD: {0}'.format(self.evaluation.STD(result)))
+        print('Entropy: {0}'.format(self.evaluation.entropy(A)))

@@ -1,15 +1,30 @@
+#! /usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""This module's docstring summary line.
+
+This is a multi-line docstring. Paragraphs are separated with blank lines.
+Lines conform to 79-column limit.
+
+Module and packages names should be short, lower_case_with_underscores.
+Notice that this in not PEP8-cheatsheet.py
+
+Seriously, use flake8. Atom.io with https://atom.io/packages/linter-flake8
+is awesome!
+
+See http://www.python.org/dev/peps/pep-0008/ for more PEP-8 details
+"""
+
 import abc
 import os
 
-import matplotlib.pyplot as plt
 import numpy as np
-from pytictoc import TicToc
-from scipy import ndimage, signal
-import skimage
+from scipy import ndimage
 
 class AbstractFocusMeasure(metaclass=abc.ABCMeta):
+    """Class with pre-processing operations for fusion rules."""
 
     def __init__(self):
+        """Constructor."""
         super(AbstractFocusMeasure, self).__init__()
 
     @abc.abstractmethod
@@ -18,12 +33,18 @@ class AbstractFocusMeasure(metaclass=abc.ABCMeta):
 
 
 class EnergyOfLaplacian(AbstractFocusMeasure):
+    """Class with pre-processing operations for fusion rules."""
 
     def __init__(self):
+        """Constructor."""
         super().__init__()
 
 
     def laplacian_of_gaussian_filter(self, arr, sigma=3, square=False):
+        """Method and function names are lower_case_with_underscores.
+
+        Always use self as first arg.
+        """
         gradients = ndimage.gaussian_laplace(arr, sigma=sigma)
         if square:
             gradients *= gradients
@@ -32,11 +53,16 @@ class EnergyOfLaplacian(AbstractFocusMeasure):
 
 
     def execute(self, **kwargs):
+        """Method and function names are lower_case_with_underscores.
+
+        Always use self as first arg.
+        """
         dataset = kwargs['dataset']
         gray_dataset = kwargs['gray_dataset']
+        sigma = kwargs['sigma']
 
         # compute the edges of the images with the laplacian filter
-        edges = np.stack([self.laplacian_of_gaussian_filter(arr, 1, square=False)
+        edges = np.stack([self.laplacian_of_gaussian_filter(arr, sigma, square=False)
                              for arr in gray_dataset], axis=2)
 
         # compute 3D indices of the highest energies of laplacian,
@@ -56,49 +82,3 @@ class EnergyOfLaplacian(AbstractFocusMeasure):
                     result[row, col, :] = stack[idx, row, col, :]
 
         return result
-
-
-
-# def LAPV(img):
-#     """Implements the Variance of Laplacian (LAP4) focus measure
-#     operator. Measures the amount of edges present in the image.
-#     :param img: the image the measure is applied to
-#     :type img: numpy.ndarray
-#     :returns: numpy.float32 -- the degree of focus
-#     """
-#     return numpy.std(skimage.filters.laplace(img)) ** 2
-
-
-# def LAPM(img):
-#     """Implements the Modified Laplacian (LAP2) focus measure
-#     operator. Measures the amount of edges present in the image.
-#     :param img: the image the measure is applied to
-#     :type img: numpy.ndarray
-#     :returns: numpy.float32 -- the degree of focus
-#     """
-#     kernel = numpy.array([-1, 2, -1])
-#     laplacianX = numpy.abs(cv2.filter2D(img, -1, kernel))
-#     laplacianY = numpy.abs(cv2.filter2D(img, -1, kernel.T))
-#     return numpy.mean(laplacianX + laplacianY)
-
-
-# def TENG(img):
-#     """Implements the Tenengrad (TENG) focus measure operator.
-#     Based on the gradient of the image.
-#     :param img: the image the measure is applied to
-#     :type img: numpy.ndarray
-#     :returns: numpy.float32 -- the degree of focus
-#     """
-#     gaussianX = cv2.Sobel(img, cv2.CV_64F, 1, 0)
-#     gaussianY = cv2.Sobel(img, cv2.CV_64F, 1, 0)
-#     return numpy.mean(gaussianX * gaussianX +
-#                       gaussianY * gaussianY)
-
-
-# def MLOG(img):
-#     """Implements the MLOG focus measure algorithm.
-#     :param img: the image the measure is applied to
-#     :type img: numpy.ndarray
-#     :returns: numpy.float32 -- the degree of focus
-#     """
-#     return numpy.max(cv2.convertScaleAbs(cv2.Laplacian(img, 3)))
