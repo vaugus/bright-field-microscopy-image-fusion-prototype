@@ -17,15 +17,3 @@ python3 main.py > (input file with a string as the path to the dataset)
 * [SciPy](https://www.scipy.org/)
 * [scikit-image](https://scikit-image.org/)
 * [Pillow](https://pillow.readthedocs.io/en/stable/)
-
-## Versioning
-
-I use [Git](https://git-scm.com/) for versioning.
-
-## Authors
-
-* **Victor Augusto** [vaugusto92](https://github.com/vaugusto92)
-
-## License
-
-This project is licensed under the GNU GPL v3.0 License - see the [LICENSE.md](LICENSE.md) file for details.
