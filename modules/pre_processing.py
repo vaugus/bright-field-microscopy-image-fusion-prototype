@@ -80,19 +80,19 @@ class PreProcessing(object):
         files = self.sort_dataset_names(filenames, extension)
         return [self.open_image(path + img, size) for img in files]
 
-        def grayscale_lightness(self, img):
-            """Converts a RGB image to grayscale with the lightness method.
+    def grayscale_lightness(self, img):
+        """Converts a RGB image to grayscale with the lightness method.
 
-            :param img: The image to be converted.
-            :type img: PIL.Image
+        :param img: The image to be converted.
+        :type img: PIL.Image
 
-            :returns: The grayscale image.
-            :rtype: PIL.Image
-            """
-            tmp = self.image_to_ndarray(img)
-            gray = tmp[:, :, 0] * 0.21 + tmp[:, :, 1] * \
-                0.71 + tmp[:, :, 2] * 0.07
-            return self.ndarray_to_image(gray)
+        :returns: The grayscale image.
+        :rtype: PIL.Image
+        """
+        tmp = self.image_to_ndarray(img)
+        gray = tmp[:, :, 0] * 0.21 + tmp[:, :, 1] * \
+            0.71 + tmp[:, :, 2] * 0.07
+        return self.ndarray_to_image(gray)
 
     def grayscale_averaging(self, img):
         """Converts a RGB image to grayscale with the averaging method.
