@@ -11,9 +11,9 @@ import os
 import numpy as np
 from PIL import Image
 
-from modules.pre_processing import PreProcessing
-from modules.focus_measures import LaplacianOfGaussianEnergy
-from modules.evaluation import Evaluation
+from .pre_processing import PreProcessing
+from .fusion_rules import LaplacianOfGaussianEnergy
+from .evaluation import Evaluation
 
 
 class Fusion(object):
@@ -46,7 +46,7 @@ class Fusion(object):
         # open the dataset images
         dataset = self.pre_processing.open_dataset(path, size)
 
-        # # convert images to grayscale
+        # convert images to grayscale
         gray_dataset = self.pre_processing.grayscale_dataset(
             dataset, 'luminance')
 
