@@ -1,10 +1,7 @@
 #! /usr/bin/env python3
 # -*- coding: utf-8 -*-
 """Entry point to run the image fusion."""
-import numpy as np
-
 import modules
-
 
 def main():
     """Receives the path and calls the Facade."""
