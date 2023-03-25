@@ -41,14 +41,11 @@ class Fusion(object):
         :param path: Location of the dataset in the filesystem.
         :type path: str
         """
-        size = None
-
         # open the dataset images
-        dataset = self.pre_processing.open_dataset(path, size)
+        dataset = self.pre_processing.open_dataset(path)
 
         # convert images to grayscale
-        gray_dataset = self.pre_processing.grayscale_dataset(
-            dataset, 'luminance')
+        gray_dataset = self.pre_processing.convert_images_to_grayscale(dataset)
 
         sigma = 0.7
 
