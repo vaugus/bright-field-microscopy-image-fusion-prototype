@@ -8,7 +8,9 @@ image fusion techniques.
 
 import numpy as np
 from skimage.filters.rank import entropy
-from skimage.morphology import disk
+from skimage.morphology import disk as disk_footprint
+
+from itertools import product
 
 
 class Evaluation(object):
@@ -21,8 +23,8 @@ class Evaluation(object):
         in
 
         Naidu, V.P.S. and Raol, J.R., 2008.
-        "Pixel-level image fusion using wavelets
-         and principal component analysis."
+        "Pixel-level image fusion using wavelets and
+         principal component analysis."
         Defence Science Journal, 58(3), p.338.
 
         :param img: The fused image to be evaluated.
@@ -34,15 +36,13 @@ class Evaluation(object):
         x, y, z = img.shape
         RF = 0.0
         CF = 0.0
-        for i in range(x):
-            for j in range(1, y):
-                for k in range(z):
-                    RF += np.square(img[i, j, k] - img[i, j-1, k])
 
-        for i in range(1, x):
-            for j in range(y):
-                for k in range(z):
-                    CF += np.square(img[i, j, k] - img[i-1, j, k])
+        for i, j, k in product(range(x), range(y), range(z)):
+            if j > 1:
+                RF += np.square(img[i, j, k] - img[i, j-1, k])
+
+            if i > 1:
+                CF += np.square(img[i, j, k] - img[i-1, j, k])
 
         CF = np.sqrt((1 / img.size) * CF)
         RF = np.sqrt((1 / img.size) * RF)
@@ -56,8 +56,8 @@ class Evaluation(object):
         in
 
         Naidu, V.P.S. and Raol, J.R., 2008.
-        "Pixel-level image fusion using wavelets
-         and principal component analysis."
+        "Pixel-level image fusion using wavelets and
+         principal component analysis."
         Defence Science Journal, 58(3), p.338.
 
         :param img: The fused image to be evaluated.
@@ -68,20 +68,21 @@ class Evaluation(object):
         """
         n, bins = np.histogram(img)
 
-        mids = 0.5*(bins[1:] + bins[:-1])
+        mids = 0.5 * (bins[1:] + bins[:-1])
         mean = np.average(mids, weights=n)
-        var = np.average((mids - mean)**2, weights=n)
+        var = np.average(np.square(mids - mean), weights=n)
+
         return np.sqrt(var)
 
-    def entropy(self, RGB):
+    def entropy(self, rgb_image):
         """Computes the Entropy of an image.
 
         This method implements the Entropy index as proposed
         in
 
         Naidu, V.P.S. and Raol, J.R., 2008.
-        "Pixel-level image fusion using wavelets
-         and principal component analysis."
+        "Pixel-level image fusion using wavelets and
+         principal component analysis."
         Defence Science Journal, 58(3), p.338.
 
         :param img: The fused image to be evaluated.
@@ -90,9 +91,9 @@ class Evaluation(object):
         :returns: The Entropy index.
         :rtype: float
         """
-        r = np.array(RGB).astype(np.uint8)[:, :, 0]
-        g = np.array(RGB).astype(np.uint8)[:, :, 1]
-        b = np.array(RGB).astype(np.uint8)[:, :, 2]
+        r = np.array(rgb_image, dtype=np.uint8)[:, :, 0]
+        g = np.array(rgb_image, dtype=np.uint8)[:, :, 1]
+        b = np.array(rgb_image, dtype=np.uint8)[:, :, 2]
 
-        H = entropy(r, disk(3)) + entropy(g, disk(3)) + entropy(b, disk(3))
-        return np.mean(H)
+        disk = disk_footprint(3)
+        return np.mean(entropy(r, disk) + entropy(g, disk) + entropy(b, disk))
