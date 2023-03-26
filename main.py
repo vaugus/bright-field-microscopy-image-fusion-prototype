@@ -10,6 +10,5 @@ def main():
     modules.Fusion().run(path)
 
 
-
 if __name__ == "__main__":
     main()
