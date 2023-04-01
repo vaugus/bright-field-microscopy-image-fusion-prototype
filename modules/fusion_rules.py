@@ -23,7 +23,7 @@ class AbstractFocusMeasure(metaclass=abc.ABCMeta):
         super(AbstractFocusMeasure, self).__init__()
 
     @abc.abstractmethod
-    def execute(self, **kwargs):
+    def execute(self, images, grayscale_images, sigma):
         """Executes the fusion rule."""
         pass
 
@@ -35,28 +35,10 @@ class LaplacianOfGaussianEnergy(AbstractFocusMeasure):
         """Constructor."""
         super().__init__()
 
-    def laplacian_of_gaussian_filter(self, img, sigma, square=False):
-        """Performs the Laplacian of Gaussian filtering process.
+    def laplacian(self, image):
+        return ndimage.gaussian_laplace(image, sigma=0.7)
 
-        :param img: The image to be filtered.
-        :type img: numpy.ndarray
-
-        :param sigma: The standard deviation of the Gaussian function.
-        :type sigma: float
-
-        :param square: A flag for squaring the gradients or not.
-        :type square: boolean
-
-        :returns: The second-order derivatives of the image.
-        :rtype: numpy.ndarray
-        """
-        gradients = ndimage.gaussian_laplace(img, sigma=sigma)
-        if square:
-            gradients *= gradients
-
-        return gradients
-
-    def execute(self, **kwargs):
+    def execute(self, dataset, grayscale_images):
         """Executes the Energy of Laplacian of Gaussian fusion rule.
 
         :param kwargs['dataset']: List of dataset images.
@@ -72,22 +54,20 @@ class LaplacianOfGaussianEnergy(AbstractFocusMeasure):
         :returns: The fused image.
         :rtype: numpy.ndarray
         """
-        dataset = kwargs['dataset']
-        gray_dataset = kwargs['gray_dataset']
-        sigma = kwargs['sigma']
-
         # compute the edges of the images with the laplacian filter
-        edges = np.stack([self.laplacian_of_gaussian_filter(arr, sigma)
-                          for arr in gray_dataset], axis=2)
+        edges = np.array([self.laplacian(img) for img in grayscale_images])
 
         # compute 3D indices of the highest energies of laplacian,
         # pixel-wise
-        energies = np.argmax(edges, axis=2)
+
+        energies = np.argmax(edges, axis=0)
+
         # Synthesize an image by sampling from each layer
         # according to it's highest energy
 
-        result = None
-        height, width = edges.shape[0:2]
+        height, width = grayscale_images[0].shape
+
+        result = np.zeros((height, width, 3), dtype=np.float32)
 
         stack = np.stack(dataset, axis=0)
         result = np.zeros((height, width, 3), dtype=np.float32)
