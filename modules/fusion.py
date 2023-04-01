@@ -3,7 +3,7 @@
 """Module with a wrapper for fusion rules.
 
 This module contains a facade class to wrap the proposed fusion
-rule implementation and eventually new implementions.
+rule implementation.
 """
 
 import os
@@ -41,22 +41,20 @@ class Fusion(object):
         :param path: Location of the dataset in the filesystem.
         :type path: str
         """
-        # open the dataset images
         dataset = self.pre_processing.open_dataset(path)
 
-        # convert images to grayscale
         gray_dataset = self.pre_processing.convert_images_to_grayscale(dataset)
 
-        sigma = 0.7
-
-        # perform the image fusion
-        result = self.LoG_energy.execute(
-            dataset=dataset, gray_dataset=gray_dataset, sigma=sigma)
+        result = self.LoG_energy.execute(dataset, gray_dataset)
 
         A = self.pre_processing.ndarray_to_image(result)
         result = self.pre_processing.normalize_image(result)
 
+        sf = self.evaluation.spatial_frequency(result)
+        std = self.evaluation.STD(result)
+        entropy = self.evaluation.entropy(A)
+
         # Evaluate
-        print('SF: {0}'.format(self.evaluation.spatial_frequency(result)))
-        print('STD: {0}'.format(self.evaluation.STD(result)))
-        print('Entropy: {0}'.format(self.evaluation.entropy(A)))
+        print('SF: {0}'.format(sf))
+        print('STD: {0}'.format(std))
+        print('Entropy: {0}'.format(entropy))
