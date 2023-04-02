@@ -10,7 +10,7 @@ RUN apk add --update --no-cache python3 python3-dev pkgconfig g++ zlib-dev \
 
 RUN ln -sf python3 /usr/bin/python \
     && python3 -m ensurepip \
-    && pip3 install --no-cache --upgrade pip setuptools
+    && pip3 install --no-cache --upgrade pip setuptools pycodestyle
 
 COPY requirements.txt /tmp/requirements.txt
 RUN python -m pip install -r /tmp/requirements.txt
