@@ -1,10 +1,5 @@
 #! /usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""Module with a wrapper for fusion rules.
-
-This module contains a facade class to wrap the proposed fusion
-rule implementation.
-"""
 
 import os
 
@@ -17,30 +12,13 @@ from .evaluation import Evaluation
 
 
 class Fusion(object):
-    """Facade class to wrap the execution of fusion rules."""
-
     def __init__(self):
-        """Constructor.
-
-        This method instantiates all the objects to perform the
-        fusion procedure.
-
-        Attributes:
-            pre_processing      PreProcessing object.
-            LoG_energy          LaplacianOfGaussianEnergy object.
-            evaluation          Evaluation object.
-        """
         super().__init__()
         self.pre_processing = PreProcessing()
         self.LoG_energy = LaplacianOfGaussianEnergy()
         self.evaluation = Evaluation()
 
     def run(self, path):
-        """Performs the image fusion procedure.
-
-        :param path: Location of the dataset in the filesystem.
-        :type path: str
-        """
         dataset = self.pre_processing.open_dataset(path)
 
         gray_dataset = self.pre_processing.convert_images_to_grayscale(dataset)

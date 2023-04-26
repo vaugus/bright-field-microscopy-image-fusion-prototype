@@ -1,10 +1,5 @@
 #! /usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""Module with pre-processing tools for image fusion.
-
-This module contains a class that implements all the pre-processing
-methods used in our image fusion approach.
-"""
 
 import os
 import pathlib
