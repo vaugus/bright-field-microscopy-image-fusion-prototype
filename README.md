@@ -18,6 +18,14 @@ We used the following evaluation methods, as proposed by ([NAIDU; RAOL, 2008](#r
 python3 main.py < /path/to/image/dataset
 ```
 
+## Running the Docker container for developement
+
+```sh
+docker build -t python .
+
+docker run --rm -it --name python -v $(pwd):/work sh
+```
+
 ## Contributing
 
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
