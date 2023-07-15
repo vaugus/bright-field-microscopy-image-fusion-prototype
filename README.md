@@ -1,6 +1,6 @@
 # Bright-Field Microscopy Image Fusion Prototype
 
-[![Continuous Integration](https://github.com/vaugus/bright-field-microscopy-image-fusion-prototype/actions/workflows/ci.yaml/badge.svg)](https://github.com/vaugus/bright-field-microscopy-image-fusion-prototype/actions/workflows/ci.yaml)
+[![Github Actions](https://github.com/vaugus/bright-field-microscopy-image-fusion-prototype/actions/workflows/ci.yaml/badge.svg)](https://github.com/vaugus/bright-field-microscopy-image-fusion-prototype/actions/workflows/ci.yaml)
 
 A Python implementation of an image fusion method using the Laplacian of Gaussian Energy approach.
 
